@@ -1,0 +1,7 @@
+# (TiP)
+loadkeys fr
+setfont ter-v22b
+
+# [PARTiTiON]
+cfdisk /dev/sda
+lsblk

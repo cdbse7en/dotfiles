@@ -1,8 +1,8 @@
-[TiP]
+[TIP]
 loadkeys fr
 setfont ter-v22b
 
-[PARTiTiON]
+[PARTITION]
 cfdisk /dev/sda
 lsblk
 
@@ -12,12 +12,87 @@ mkdir /mnt/ugly
 mount /dev/sda2 /mnt/ugly
 lsblk
 
-[SWAP FiLE]
+[SWAP FILE]
 fallocate -l 2G /mnt/swapfile
 chmod 600 /mnt/swapfile
 mkswap /mnt/swapfile
 swapon /mnt/swapfile
 free -h
 
-[iWCTL]
+[IWCTL]
 iwctl station wlan0 scan
+iwctl station get-networks 
+iwctl station connect <SSID>
+
+# TIP: Hidden SSID
+nano /var/lib/iwd/<SSID>.psk
+[Settings]
+Hidden=true
+
+[REFLECTOR]
+nano /etc/pacman.conf
+(#) Color
+(#) VerbosePkgList
+(#) ParallelDownloads
+
+reflector -c France,Spain -a 10 -p https -sort rate --verbose --save /etc/pacman.d/mirrorlist
+
+[BASE SYSTEM]
+pacstrap /mnt base base-devel linux linux-firmware linux-headers nano intel-ucode terminus-font
+
+genfstab -U /mnt >> /mnt/etc/fstab
+cat /mnt/etc/fstab
+arch-chroot /mnt
+
+[LOCALIZATION]
+nano /etc/locale.gen
+(#) ar_MA.UTF-8
+(#) en_US.UTF-8
+
+locale-gen
+
+nano /etc/locale.conf
+LANG=en_US.UTF-8
+
+nano /etc/vconsole
+KEYMAP=fr
+
+[NETWORK]
+pacman -S networkmanager iwd reflector
+systemctl enable NetworkManager
+
+nano /etc/hostname
+arch
+
+nano /etc/hosts
+127.0.0.1 localhost
+127.0.1.1 arch.localdomain  arch
+
+[USER]
+useradd -mG wheel archer
+passwd archer
+
+EDITOR=nano visudo
+(#) wheel ALL (ALL) ALL
+
+[GRUB]
+pacman -S grub os-prober ntfs-3g
+grub-install --target=i386-pc /dev/sda
+
+nano /etc/default/grub
+(#) GRUB_DISABLE_OS_PROBER=false
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+
+
+
+
+
+
+
+
+
+
+
+

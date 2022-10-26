@@ -1,0 +1,80 @@
+[NMCLI]
+nmcli d wifi list
+nmcli d wifi con <SSID> password <PASS>
+nmcli c show
+
+# TIP: Hidden SSID
+nmcli c add type wifi con-name arch ifname wlan0 ssid <SSID> wifi-sec.key-mgmt wpa-psk
+nmcli c up arch --ask
+nmcli c show
+
+# TIP: Static IP
+nmcli c down arch
+nmcli c mod arch ipv4.addresses 192.168.1.2/24
+nmcli c mod arch ipv4.gateway 192.168.1.1
+nmcli c mod arch ipv4.dns "1.1.1.1"
+nmcli c mod arch ipv4.method manual
+nmcli c mod arch ipv6.method disabled
+nmcli c up arch
+
+[REFLECTOR]
+nano /etc/pacman.conf
+(#) Color
+(#) VerbosePkgList
+(#) ParallelDownloads
+ILoveCandy
+
+reflector -c France,Spain -a 10 -p https -sort rate --verbose --save /etc/pacman.d/mirrorlist
+
+pacman-key --init
+pacman-key --populate
+pacman -Sy archlinux-keyring
+pacman -Su
+
+[BSPWM]
+pacman -S bspwm sxhkd dmenu rxvt-unicode networkmanager dunst ranger xdg-user-dirs xdg-utils
+mkdir -p ~/.config/{bspwm,sxhkd}
+
+[XINIT]
+pacman -S xorg-server xorg-xinit xf86-video-intel
+
+# TIP:Lightdm
+pacman -S lightdm lightdm-gtk-greeter xorg-server xf86-video-intel
+systemctl enable lightdm
+
+[SOUND]
+pacman -S pulseaudio-alsa alsa-utils
+systemctl --user enable pulseaudio
+
+# TIP: Pipewire
+pacman -S pipewire pipewire-alsa pipewire-pulse wireplumber pavucontrol
+systemctl --user enable pipewire pipewire-pulse wireplumber
+
+[KEYBOARD]
+localectl set-x11-keymap fr,ara pc-105 azerty grp:alt_shift_toggle
+
+[BSPWM EXTRA]
+pacman -S firefox mpv gst-{libav,plugins-{bad,ugly}} mupdf htop noto-fonts neovim
+pacman -S archlinux-wallpaper unclutter xorg-xsetroot hsetroot feh 
+
+[GRUB]
+nano /etc/default/grub
+
+[FONT]
+mkdir ~/.config/fontconfig
+
+[Display]
+
+[dotfiles]
+pacman -S git
+https://github.com/cdbse7en/dotfiles.git
+cd dotfiles
+cp .* ~/
+cp .config/* ~/
+
+
+
+
+
+
+
